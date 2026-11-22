@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Generate enchanted book /give commands for all 117 enchantments registered in All the Mods 10." />
+    <meta name="theme-color" content="#111813" />
+    <title>ATM10 Enchanted Book Generator</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#generator">Skip to generator</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="ATM10 Enchanted Book Generator home">
+        <span class="brand-cube" aria-hidden="true"><i></i></span>
+        <span><b>ATM10</b><small>Book Forge</small></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#generator">Generator</a>
+        <a href="#about">About the data</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="status-pip"></span> ATM10 · Minecraft Java 1.21.1</div>
+          <h1 id="page-title">Forge the exact<br /><em>enchanted book</em> you need.</h1>
+          <p>Search every command-addressable enchantment loaded by ATM10, set pack-aware levels, and copy a ready-to-run <code>/give</code> command.</p>
+          <div class="hero-stats" aria-label="Registry summary">
+            <div><strong>117</strong><span>enchantments</span></div>
+            <div><strong>21</strong><span>mod namespaces</span></div>
+            <div><strong>255</strong><span>command level cap</span></div>
+          </div>
+        </div>
+
+        <div class="book-stage" aria-hidden="true">
+          <div class="rune rune-one">✦</div>
+          <div class="rune rune-two">⌁</div>
+          <div class="pixel-book">
+            <div class="book-pages"></div>
+            <div class="book-cover"><span></span></div>
+            <div class="book-spine"></div>
+          </div>
+          <span class="stage-shadow"></span>
+          <span class="xp-orb orb-one"></span>
+          <span class="xp-orb orb-two"></span>
+          <span class="xp-orb orb-three"></span>
+        </div>
+      </section>
+
+      <section class="generator-shell" id="generator" aria-labelledby="generator-title">
+        <div class="generator-heading">
+          <div>
+            <span class="step-label">COMMAND WORKBENCH</span>
+            <h2 id="generator-title">Build your book</h2>
+          </div>
+          <button class="text-button" id="reset-button" type="button">Reset all</button>
+        </div>
+
+        <div class="workspace">
+          <section class="catalog-panel" aria-labelledby="catalog-title">
+            <div class="panel-heading">
+              <span class="step-number">1</span>
+              <div><h3 id="catalog-title">Pick enchantments</h3><p>Add any combination to the book.</p></div>
+              <span class="selection-count" id="selection-count">0 selected</span>
+            </div>
+
+            <div class="catalog-tools">
+              <label class="search-field">
+                <span class="sr-only">Search enchantments</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m20 20-4.6-4.6m2.6-5.1A7.7 7.7 0 1 1 2.6 10.3a7.7 7.7 0 0 1 15.4 0Z" /></svg>
+                <input id="search-input" type="search" placeholder="Search name, mod, or command ID…" autocomplete="off" />
+                <kbd>/</kbd>
+              </label>
+              <label class="select-field">
+                <span class="sr-only">Filter by mod</span>
+                <select id="mod-filter"><option value="all">All mods</option></select>
+                <svg viewBox="0 0 12 8" aria-hidden="true"><path d="m1 1.5 5 5 5-5" /></svg>
+              </label>
+            </div>
+
+            <div class="list-meta">
+              <span id="result-count">Showing 117 enchantments</span>
+              <button id="select-visible" type="button">Select visible</button>
+            </div>
+            <div class="enchantment-list" id="enchantment-list" role="list" aria-live="polite"></div>
+            <div class="empty-state" id="empty-state" hidden>
+              <span>?</span><h4>No enchantments found</h4><p>Try another name, namespace, or mod filter.</p>
+            </div>
+          </section>
+
+          <aside class="build-panel" aria-label="Book configuration and generated command">
+            <section class="selected-section" aria-labelledby="selected-title">
+              <div class="panel-heading compact">
+                <span class="step-number">2</span>
+                <div><h3 id="selected-title">Set levels</h3><p>Pack maximums are pre-selected.</p></div>
+              </div>
+              <div class="selected-empty" id="selected-empty">
+                <div class="mini-book" aria-hidden="true"><span></span></div>
+                <p>Your enchanted book is empty.</p>
+                <small>Choose an enchantment from the registry.</small>
+              </div>
+              <div class="selected-list" id="selected-list"></div>
+              <label class="toggle-row">
+                <span><b>Allow over pack max</b><small>Unlock command levels up to 255.</small></span>
+                <input id="over-max" type="checkbox" role="switch" />
+                <i aria-hidden="true"></i>
+              </label>
+              <div class="conflict-box" id="conflict-box" hidden>
+                <span aria-hidden="true">!</span>
+                <div><b>Known anvil conflict</b><p id="conflict-text"></p></div>
+              </div>
+            </section>
+
+            <section class="output-section" aria-labelledby="output-title">
+              <div class="panel-heading compact">
+                <span class="step-number">3</span>
+                <div><h3 id="output-title">Copy command</h3><p>Paste into chat or a command block.</p></div>
+              </div>
+              <div class="output-options">
+                <label>Target
+                  <select id="target-select">
+                    <option value="@p">@p · nearest player</option>
+                    <option value="@s">@s · yourself</option>
+                    <option value="@a">@a · all players</option>
+                    <option value="@r">@r · random player</option>
+                  </select>
+                </label>
+                <label>Count
+                  <input id="count-input" type="number" min="1" max="64" value="1" inputmode="numeric" />
+                </label>
+              </div>
+              <div class="command-box" id="command-box">
+                <code id="command-output">/give @p minecraft:enchanted_book 1</code>
+              </div>
+              <button class="copy-button" id="copy-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h11v12H8zM5 16H3V4h11v2" /></svg>
+                <span>Copy command</span>
+              </button>
+              <p class="output-note">Uses Java 1.21.1 item-component syntax. Commands can create conflicting books even when an anvils cannot apply them.</p>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="about" id="about" aria-labelledby="about-title">
+        <div>
+          <span class="step-label">REGISTRY NOTES</span>
+          <h2 id="about-title">Built from the pack, not a guess.</h2>
+        </div>
+        <div class="about-copy">
+          <p>The catalog mirrors every entry in ATM10’s official Apotheosis enchantment registry configuration, including its adjusted maximum level. Some enchantments may be treasure-only, disabled from normal enchanting, or intended for special items—but remain valid registry IDs for commands.</p>
+          <p class="source-line"><span>Snapshot</span> 22 Nov 2026 <i></i> <span>Pack</span> ATM10 / Minecraft 1.21.1</p>
+          <a class="source-link" href="https://github.com/AllTheMods/ATM-10/blob/main/config/apotheosis/enchantments.cfg" target="_blank" rel="noreferrer">View official registry source <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-brand"><span class="brand-cube small" aria-hidden="true"><i></i></span><b>ATM10 Book Forge</b></div>
+      <p>Fan-made utility. Not affiliated with Mojang, Microsoft, or the All the Mods team.</p>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">Command copied to clipboard</div>
+    <script src="./app.js"></script>
+  </body>
+</html>
